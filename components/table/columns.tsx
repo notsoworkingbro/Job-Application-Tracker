@@ -1,14 +1,9 @@
 "use client"
 
 import { ColumnDef } from "@tanstack/react-table"
+import { Application } from "@/lib/db/schema"
 
-export type Application = {
-  company: string
-  position: string
-  status: "Offer" | "Applied" | "Interviewed" | "Rejected" | "Pending"
-  application_date: string
-  salary: number
-}
+
 
 export const columns: ColumnDef<Application>[] = [
   {
