@@ -4,6 +4,8 @@ import { DataTable } from "@/components/table/data-table"
 import { applications } from "@/lib/db/schema"
 import { db } from "@/lib/db/db"
 
+import { AddApplicationDialog } from "@/components/table/add-application-dialog"
+
 export default async function Page() {
 
   // 🔥 Fetch data from Neon database
@@ -11,6 +13,9 @@ export default async function Page() {
 
   return (
     <div className="p-6">
+      <div className="flex justify-between mb-4">
+        <AddApplicationDialog />
+      </div>
       <DataTable columns={columns} data={data} />
     </div>
   )

@@ -9,7 +9,7 @@ export default function Navbar() {
 
         {/* Logo / Brand */}
         <Link href="/" className="text-xl font-bold">
-          MyApp
+          I Need A Job
         </Link>
 
         {/* Navigation Links */}
