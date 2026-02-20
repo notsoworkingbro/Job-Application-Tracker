@@ -16,9 +16,10 @@ interface DataTableProps {
   columns: ColumnDef<Application, unknown>[];
   data: Application[];
   onAdd: (newApp: Application) => void;
+  onDelete: (ids: number[]) => void;
 }
 
-export function DataTable({ columns, data, onAdd }: DataTableProps) {
+export function DataTable({ columns, data, onAdd, onDelete }: DataTableProps) {
   const table = useReactTable({
     data,
     columns,
@@ -30,7 +31,7 @@ export function DataTable({ columns, data, onAdd }: DataTableProps) {
     <div className="mb-4 px-4 py-2">
       <div className="flex gap-2 mb-4">
         <AddApplicationDialog onAdd={onAdd} />
-        <DeleteTableAction table={table} />
+        <DeleteTableAction table={table} onDelete={onDelete}/>
       </div>
 
       <div className="rounded-md border overflow-hidden">
