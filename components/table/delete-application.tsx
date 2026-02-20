@@ -18,10 +18,10 @@ import type { Application } from "@/lib/db/schema";
 
 interface Props {
   table: Table<Application>;
+  onDelete: (ids: number[]) => void;
 }
 
-export function DeleteTableAction({ table }: Props) {
-  const router = useRouter();
+export function DeleteTableAction({ table, onDelete }: Props) {
   const selectedRows = table.getSelectedRowModel().rows;
   const selectedCount = selectedRows.length;
 
@@ -32,7 +32,9 @@ export function DeleteTableAction({ table }: Props) {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ ids }),
     });
-    router.refresh();
+
+    onDelete(ids);
+    table.resetRowSelection();
   };
 
   return (
