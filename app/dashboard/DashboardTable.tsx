@@ -19,10 +19,12 @@ export default function DashboardTable() {
   }, []);
 
   const handleAdd = (newApp: Application) => setData((prev) => [...prev, newApp]);
+  const handleDelete = (ids: number[]) => {setData((prev) => prev.filter((app) => !ids.includes(app.id)));};
+
 
   return (
     <div className="p-6">
-      <DataTable columns={columns} data={data} onAdd={handleAdd} />
+      <DataTable columns={columns} data={data} onAdd={handleAdd} onDelete={handleDelete}/>
     </div>
   );
 }
