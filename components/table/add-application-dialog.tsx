@@ -1,107 +1,82 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog"
-
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-
+} from "@/components/ui/dialog";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select"
+} from "@/components/ui/select";
+import type { Application, NewApplication } from "@/lib/db/schema";
 
-export function AddApplicationDialog() {
+interface Props {
+  onAdd: (newApp: Application) => void;
+}
 
-  const [open, setOpen] = useState(false)
+export function AddApplicationDialog({ onAdd }: Props) {
+  const [open, setOpen] = useState(false);
 
   const [form, setForm] = useState({
     company: "",
     position: "",
     status: "Applied",
     application_date: "",
-    salary: ""
-  })
+    salary: "",
+  });
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setForm({
-      ...form,
-      [e.target.name]: e.target.value
-    })
-  }
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) =>
+    setForm({ ...form, [e.target.name]: e.target.value });
 
   const handleSubmit = async () => {
-
-    await fetch("/api/applications", {
+    const response = await fetch("/api/applications", {
       method: "POST",
-      body: JSON.stringify({
-        ...form,
-        salary: Number(form.salary)
-      })
-    })
-
-    setOpen(false)
-  }
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ ...form, salary: Number(form.salary) } as NewApplication),
+    });
+    const newApp: Application = await response.json();
+    onAdd(newApp);
+    setOpen(false);
+    setForm({ company: "", position: "", status: "Applied", application_date: "", salary: "" });
+  };
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-
-      {/* Small Add Button */}
       <DialogTrigger asChild>
         <Button size="sm">+ Add</Button>
       </DialogTrigger>
-
       <DialogContent>
-
         <DialogHeader>
           <DialogTitle>Add Application</DialogTitle>
         </DialogHeader>
 
         <div className="space-y-4">
-
-          {/* Company */}
           <div>
             <Label>Company</Label>
-            <Input
-              name="company"
-              value={form.company}
-              onChange={handleChange}
-            />
+            <Input name="company" value={form.company} onChange={handleChange} />
           </div>
 
-          {/* Position */}
           <div>
             <Label>Position</Label>
-            <Input
-              name="position"
-              value={form.position}
-              onChange={handleChange}
-            />
+            <Input name="position" value={form.position} onChange={handleChange} />
           </div>
 
-          {/* Status */}
           <div>
             <Label>Status</Label>
-            <Select
-              onValueChange={(value) =>
-                setForm({ ...form, status: value })
-              }
-            >
+            <Select value={form.status} onValueChange={(val) => setForm({ ...form, status: val })}>
               <SelectTrigger>
-                <SelectValue placeholder="Select status" />
+                <SelectValue />
               </SelectTrigger>
-
               <SelectContent>
                 <SelectItem value="Applied">Applied</SelectItem>
                 <SelectItem value="Interviewed">Interviewed</SelectItem>
@@ -112,34 +87,21 @@ export function AddApplicationDialog() {
             </Select>
           </div>
 
-          {/* Date */}
           <div>
             <Label>Application Date</Label>
-            <Input
-              type="date"
-              name="application_date"
-              value={form.application_date}
-              onChange={handleChange}
-            />
+            <Input type="date" name="application_date" value={form.application_date} onChange={handleChange} />
           </div>
 
-          {/* Salary */}
           <div>
             <Label>Salary</Label>
-            <Input
-              type="number"
-              name="salary"
-              value={form.salary}
-              onChange={handleChange}
-            />
+            <Input type="number" name="salary" value={form.salary} onChange={handleChange} />
           </div>
 
           <Button onClick={handleSubmit} className="w-full">
             Add Application
           </Button>
-
         </div>
       </DialogContent>
     </Dialog>
-  )
+  );
 }
