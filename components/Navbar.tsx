@@ -7,12 +7,10 @@ export default function Navbar() {
     <nav className="w-full border-b bg-white shadow-sm">
       <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
 
-        {/* Logo / Brand */}
         <Link href="/" className="text-xl font-bold">
           I Need A Job
         </Link>
 
-        {/* Navigation Links */}
         <div className="flex gap-6">
           <Link href="/" className="hover:text-blue-500">
             Home
