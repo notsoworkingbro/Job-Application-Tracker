@@ -8,7 +8,6 @@ import type { Application } from "@/lib/db/schema";
 export default function DashboardTable() {
   const [data, setData] = useState<Application[]>([]);
 
-  // Load initial data from API
   useEffect(() => {
     async function fetchData() {
       const res = await fetch("/api/applications");
