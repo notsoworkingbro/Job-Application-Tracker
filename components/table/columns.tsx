@@ -14,6 +14,16 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
+import { format } from "date-fns";
+import { Calendar } from "@/components/ui/calendar";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { Button } from "@/components/ui/button";
+
+
 function EditableCell(
   props: CellContext<Application, unknown>
 ) {
@@ -101,6 +111,68 @@ function StatusCell(
   );
 }
 
+function DateCell(
+  props: CellContext<Application, unknown>
+) {
+  const { row, column, table } = props;
+
+  const rawValue = row.original.application_date;
+
+  const parsedDate =
+    rawValue && !isNaN(new Date(rawValue).getTime())
+      ? new Date(rawValue)
+      : undefined;
+
+  const handleChange = async (date: Date | undefined) => {
+    if (!date) return;
+
+    const id = row.original.id;
+    const field = column.id as keyof Application;
+
+    const formattedDate = format(date, "yyyy-MM-dd");
+
+    await fetch("/api/applications", {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        id,
+        field,
+        value: formattedDate,
+      }),
+    });
+
+    table.options.meta?.updateData?.(
+      row.index,
+      field,
+      formattedDate
+    );
+  };
+
+  return (
+    <Popover>
+      <PopoverTrigger asChild>
+        <Button
+          variant="outline"
+          className="h-8 w-full justify-start text-left font-normal"
+        >
+          {parsedDate
+            ? format(parsedDate, "PPP")
+            : "Pick a date"}
+        </Button>
+      </PopoverTrigger>
+
+      <PopoverContent className="w-auto p-0">
+        <Calendar
+          mode="single"
+          selected={parsedDate}
+          onSelect={handleChange}
+          initialFocus
+        />
+      </PopoverContent>
+    </Popover>
+  );
+}
+
 export const columns: ColumnDef<Application>[] = [
   {
     id: "select",
@@ -144,7 +216,7 @@ export const columns: ColumnDef<Application>[] = [
   {
     accessorKey: "application_date",
     header: "Application Date",
-    cell: EditableCell,
+    cell: DateCell,
   },
   {
     accessorKey: "minimum salary",
