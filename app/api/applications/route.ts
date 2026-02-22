@@ -3,22 +3,15 @@ import { db } from "@/lib/db/db"
 import { applications } from "@/lib/db/schema"
 import { inArray, eq } from "drizzle-orm"
 
-export async function POST(req: NextRequest) {
-  try {
-    const body = await req.json()
-    const inserted = await db.insert(applications).values({
-      company: body.company,
-      position: body.position,
-      status: body.status,
-      application_date: body.application_date,
-      salary: body.salary,
-    }).returning()
+export async function POST(req: Request) {
+  const body = await req.json();
 
-    return NextResponse.json(inserted)
-  } catch (err) {
-    console.error(err)
-    return NextResponse.json({ error: "Failed to add application" }, { status: 500 })
-  }
+  const inserted = await db
+    .insert(applications)
+    .values(body)
+    .returning();
+
+  return NextResponse.json(inserted[0]);
 }
 
 export async function GET() {
