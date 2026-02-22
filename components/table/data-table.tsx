@@ -1,5 +1,17 @@
 "use client";
 
+import * as React from "react";
+
+declare module "@tanstack/react-table" {
+  interface TableMeta<TData> {
+    updateData?: (
+      rowIndex: number,
+      columnId: keyof TData,
+      value: unknown
+    ) => void;
+  }
+}
+
 import {
   ColumnDef,
   flexRender,
@@ -20,11 +32,28 @@ interface DataTableProps {
 }
 
 export function DataTable({ columns, data, onAdd, onDelete }: DataTableProps) {
+  const [localData, setLocalData] = React.useState<Application[]>(data);
+
+  React.useEffect(() => {
+    setLocalData(data);
+  }, [data]);
+
   const table = useReactTable({
-    data,
+    data: localData,
     columns,
-    enableRowSelection: true,
     getCoreRowModel: getCoreRowModel(),
+    enableRowSelection: true,
+    meta: {
+      updateData: (rowIndex, columnId, value) => {
+        setLocalData((old) =>
+          old.map((row, index) =>
+            index === rowIndex
+              ? { ...row, [columnId]: value }
+              : row
+          )
+        );
+      },
+    },
   });
 
   return (
