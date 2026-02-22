@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server"
 import { db } from "@/lib/db/db"
 import { applications } from "@/lib/db/schema"
-import { inArray } from "drizzle-orm"  // <-- import this
+import { inArray, eq } from "drizzle-orm"
 
 export async function POST(req: NextRequest) {
   try {
@@ -12,7 +12,7 @@ export async function POST(req: NextRequest) {
       status: body.status,
       application_date: body.application_date,
       salary: body.salary,
-    }).returning() // returning inserted row
+    }).returning()
 
     return NextResponse.json(inserted)
   } catch (err) {
@@ -35,4 +35,15 @@ export async function DELETE(req: NextRequest) {
     console.error(err)
     return NextResponse.json({ error: "Failed to delete applications" }, { status: 500 })
   }
+}
+
+export async function PATCH(req: Request) {
+  const { id, field, value } = await req.json();
+
+  await db
+    .update(applications)
+    .set({ [field]: value })
+    .where(eq(applications.id, id));
+
+  return Response.json({ success: true });
 }
