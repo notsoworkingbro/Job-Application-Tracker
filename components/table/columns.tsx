@@ -147,8 +147,13 @@ export const columns: ColumnDef<Application>[] = [
     cell: EditableCell,
   },
   {
-    accessorKey: "salary",
-    header: "Salary",
+    accessorKey: "minimum salary",
+    header: "Minimum Salary",
+    cell: EditableCell,
+  },
+  {
+    accessorKey: "maximum salary",
+    header: "Maximum Salary",
     cell: EditableCell,
   },
 ];
