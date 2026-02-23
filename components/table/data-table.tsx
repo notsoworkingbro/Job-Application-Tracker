@@ -18,6 +18,8 @@ import {
   getCoreRowModel,
   useReactTable,
   RowSelectionState,
+  SortingState,
+  getSortedRowModel,
 } from "@tanstack/react-table";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { DeleteTableAction } from "./delete-application";
@@ -33,6 +35,7 @@ interface DataTableProps {
 
 export function DataTable({ columns, data, onAdd, onDelete }: DataTableProps) {
   const [localData, setLocalData] = React.useState<Application[]>(data);
+  const [sorting, setSorting] = React.useState<SortingState>([]);
 
   React.useEffect(() => {
     setLocalData(data);
@@ -41,7 +44,10 @@ export function DataTable({ columns, data, onAdd, onDelete }: DataTableProps) {
   const table = useReactTable({
     data: localData,
     columns,
+    state: { sorting },
+    onSortingChange: setSorting,
     getCoreRowModel: getCoreRowModel(),
+    getSortedRowModel: getSortedRowModel(),
     enableRowSelection: true,
     meta: {
       updateData: (rowIndex, columnId, value) => {
