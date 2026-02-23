@@ -11,7 +11,8 @@ export async function addApplication(formData: FormData) {
     position: formData.get("position") as string,
     status: formData.get("status") as string,
     application_date: formData.get("application_date") as string,
-    salary: Number(formData.get("salary")),
+    min_salary: Number(formData.get("min_salary")),
+    max_salary: Number(formData.get("max_salary")),
   })
 
   revalidatePath("/dashboard")
