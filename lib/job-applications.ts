@@ -20,7 +20,11 @@ export const columns: ColumnDef<Application>[] = [
     header: "Application Date",
   },
   {
-    accessorKey: "salary",
-    header: "Salary",
+    accessorKey: "min_salary",
+    header: "Minimum Salary",
+  },
+  {
+    accessorKey: "max_salary",
+    header: "Maximum Salary",
   },
 ]
