@@ -32,22 +32,70 @@ export function AddApplicationDialog({ onAdd }: Props) {
     position: "",
     status: "Applied",
     application_date: "",
-    salary: "",
+    min_salary: "",
+    max_salary: "",
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) =>
     setForm({ ...form, [e.target.name]: e.target.value });
 
   const handleSubmit = async () => {
-    const response = await fetch("/api/applications", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ ...form, salary: Number(form.salary) } as NewApplication),
-    });
-    const newApp: Application = await response.json();
-    onAdd(newApp);
-    setOpen(false);
-    setForm({ company: "", position: "", status: "Applied", application_date: "", salary: "" });
+    if (!form.company.trim()) {
+      alert("Company is required");
+      return;
+    }
+
+    if (!form.position.trim()) {
+      alert("Position is required");
+      return;
+    }
+
+    if (
+      form.min_salary &&
+      form.max_salary &&
+      Number(form.max_salary) < Number(form.min_salary)
+    ) {
+      alert("Max salary must be greater than or equal to min salary");
+      return;
+    }
+
+    try {
+      const response = await fetch("/api/applications", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          ...form,
+          min_salary: form.min_salary
+            ? Number(form.min_salary)
+            : null,
+          max_salary: form.max_salary
+            ? Number(form.max_salary)
+            : null,
+        } as NewApplication),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to create application");
+      }
+
+      const newApp: Application = await response.json();
+
+      onAdd(newApp);
+
+      setOpen(false);
+
+      setForm({
+        company: "",
+        position: "",
+        status: "Applied",
+        application_date: "",
+        min_salary: "",
+        max_salary: "",
+      });
+    } catch (error) {
+      console.error(error);
+      alert("Something went wrong");
+    }
   };
 
   return (
@@ -93,8 +141,13 @@ export function AddApplicationDialog({ onAdd }: Props) {
           </div>
 
           <div>
-            <Label>Salary</Label>
-            <Input type="number" name="salary" value={form.salary} onChange={handleChange} />
+            <Label>Minimum Salary</Label>
+            <Input type="number" name="min_salary" value={form.min_salary} onChange={handleChange} />
+          </div>
+
+          <div>
+            <Label>Maximum Salary</Label>
+            <Input type="number" name="max_salary" value={form.max_salary} onChange={handleChange} />
           </div>
 
           <Button onClick={handleSubmit} className="w-full">
