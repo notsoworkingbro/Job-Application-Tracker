@@ -217,14 +217,15 @@ export const columns: ColumnDef<Application>[] = [
     accessorKey: "application_date",
     header: "Application Date",
     cell: DateCell,
+    sortingFn: "datetime",
   },
   {
-    accessorKey: "minimum salary",
+    accessorKey: "min_salary",
     header: "Minimum Salary",
     cell: EditableCell,
   },
   {
-    accessorKey: "maximum salary",
+    accessorKey: "max_salary",
     header: "Maximum Salary",
     cell: EditableCell,
   },
