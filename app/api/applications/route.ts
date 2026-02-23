@@ -4,14 +4,22 @@ import { applications } from "@/lib/db/schema"
 import { inArray, eq } from "drizzle-orm"
 
 export async function POST(req: Request) {
-  const body = await req.json();
+  try {
+    const body = await req.json();
 
-  const inserted = await db
-    .insert(applications)
-    .values(body)
-    .returning();
+    const inserted = await db
+      .insert(applications)
+      .values(body)
+      .returning();
 
-  return NextResponse.json(inserted[0]);
+    return NextResponse.json(inserted[0]);
+  } catch (error) {
+    console.error(error);
+    return NextResponse.json(
+      { error: "Failed to insert" },
+      { status: 500 }
+    );
+  }
 }
 
 export async function GET() {
