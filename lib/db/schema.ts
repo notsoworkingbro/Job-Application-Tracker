@@ -7,7 +7,8 @@ export const applications = pgTable("applications", {
   position: text("position").notNull(),
   status: text("status").notNull(),
   application_date: text("application_date").notNull(),
-  salary: integer("salary").notNull(),
+  min_salary: integer("min_salary").notNull(),
+  max_salary: integer("max_salary").notNull(),
 })
 
 export type Application = InferSelectModel<typeof applications>
